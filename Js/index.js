@@ -1,9 +1,40 @@
 const image1 = document.querySelector(".first > img");
 const image2 = document.querySelector(".second > img");
 const resolt = document.querySelector(".resolt");
+const firstImage = document.querySelector("#first-image");
+const secondImage = document.querySelector("#second-image");
+const compare = document.querySelector(".compare")
+const color = document.querySelector("#color")
+
+
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
+const reader1 = new FileReader();
+const reader2 = new FileReader();
+
+
+
+secondImage.addEventListener('change', (event) => {
+    const fileList = event.target.files;
+    image2.file = fileList[0]
+    // console.log(fileList);
+    reader1.addEventListener('load', (event) => {
+        image2.src = event.target.result;
+    });
+    reader1.readAsDataURL(fileList[0]);
+});
+
+firstImage.addEventListener('change', (event) => {
+    const fileList = event.target.files;
+    image1.file = fileList[0]
+    // console.log(fileList);
+    reader2.addEventListener('load', (event) => {
+        image1.src = event.target.result;
+    });
+    reader2.readAsDataURL(fileList[0]);
+
+});
 
 function drawPixel(context, x, y, color) {
     let roundedX = Math.round(x);
@@ -22,7 +53,8 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 
 };
 
-image2.addEventListener("load", () => {
+const comparation = () => {
+    // image2.addEventListener("load", () => {
     canvas1.width = image1.width;
     canvas1.height = image1.height;
 
@@ -36,9 +68,14 @@ image2.addEventListener("load", () => {
     context1.drawImage(image1, 0, 0);
     const context2 = canvas2.getContext('2d');
     context2.drawImage(image2, 0, 0);
+    const contextRez = canvasRes.getContext('2d');
+
 
     const imageData1 = context1.getImageData(0, 0, canvas1.width, canvas1.height);
     const imageData2 = context2.getImageData(0, 0, canvas2.width, canvas2.height);
+    const RezData2 = contextRez.getImageData(0, 0, canvasRes.width, canvasRes.height);
+
+    resolt.appendChild(canvasRes);
 
 
     for (let index = 0; index < (canvas1.width * canvas1.height * 4); index += 4) {
@@ -53,32 +90,25 @@ image2.addEventListener("load", () => {
                 b2: imageData2.data[index + 2],
                 a1: imageData2.data[index + 3],
                 a2: imageData2.data[index + 3],
-                accuracy: 110,
+                accuracy: 15,
             }
         )
         ) {
             let x = Math.floor((index / 4) % canvas1.width + 1);
             let y = Math.floor(((index / 4) / canvas1.width));
-            drawPixel(context1, x, y, 'red');
-            console.log(`   X = ${x}
-                Y =${y}
-                index=${index}
-                (index / 4) % canvas1.width +1 = ${(index / 4) % canvas1.width + 1}
-                (index / 4) / canvas1.width) = ${(index / 4) / canvas1.width}`);
+            drawPixel(contextRez, x, y, color.value);
+            // console.log(`   X = ${x}
+            //     Y =${y}
+            //     index=${index}
+            //     (index / 4) % canvas1.width +1 = ${(index / 4) % canvas1.width + 1}
+            //     (index / 4) / canvas1.width) = ${(index / 4) / canvas1.width}`);
 
         }
 
 
     }
 
-    resolt.appendChild(canvas1);
-});
+    // });
+};
 
-
-
-
-
-// Usage example:
-
-// var canvas = document.querySelector('#my-canvas');
-// var context = canvas.getContext('2d');
+compare.addEventListener("click", comparation)

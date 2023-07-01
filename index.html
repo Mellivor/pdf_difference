@@ -11,17 +11,28 @@
 
 <body>
     <main>
+        <form action="#">
+            <input type="file" id="first-image" name="avatar" accept="image/png, image/jpeg">
+            <input type="file" id="second-image" name="avatar" accept="image/png, image/jpeg">
+            <input type="color" name="color" id="color">
+            <label for="color">Add differerensed pixels color</label>
+            <input type="radio" name="chack-type" value="first" checked id="radio1">
+            <label for="radio1">Resolt on first image</label>
+            <input type="radio" name="chack-type" value="sec" id="radio2">
+            <label for="radio2">Resolt on white sheet</label>
+        </form>
         <div class="files">
             <div class="first">
-                <img src="./Img/2.png" alt="1">
+                <img src="" alt="1">
             </div>
             <div class="second">
-                <img src="./Img/1.png" alt="3">
+                <img src="" alt="3">
             </div>
         </div>
         <div class="resolt">
 
         </div>
+        <button class="compare">Compare</button>
     </main>
 </body>
 <script src="./Js/index.js"></script>

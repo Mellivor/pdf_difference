@@ -43,6 +43,12 @@ const getCanvasData = (canvas, image) => {
 
 const readImage = (file, target) => {
 
+    if (!file) {
+        allLoaded -= 1;
+        target.innerHTML = '<i class="fa-sharp fa-solid fa-file-pdf"></i>';
+        return;
+    };
+
     if (file.type && !file.type.startsWith('image/')) {
         console.log('File is not an image.', file.type, file);
         allLoaded -= 1;
@@ -54,8 +60,8 @@ const readImage = (file, target) => {
     reader.addEventListener('load', (event) => {
         const image = new Image()
         image.src = event.target.result;
+        target.innerHTML = '';
         target.appendChild(image);
-        console.log(111);
     });
 
     reader.readAsDataURL(file);
@@ -106,6 +112,7 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 };
 
 const comparation = () => {
+    console.log(allLoaded);
     if (allLoaded === 2) {
 
         const imgae1 = new Image();

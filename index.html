@@ -18,20 +18,24 @@
             <label for="first-image">Chose second image</label>
             <input type="color" name="color" id="color" value="#FF69B4">
             <label for="color">Add differerensed pixels color</label>
-            <input type="radio" name="chack-type" value="1" checked id="radio1">
+            <input type="radio" name="chack-type" value="0" checked id="radio1">
             <label for="radio1">Resolt on first image</label>
-            <input type="radio" name="chack-type" value="0" id="radio2">
+            <input type="radio" name="chack-type" value="1" id="radio2">
             <label for="radio2">Resolt on white sheet</label>
+            <input type="radio" name="chack-type" value="2" id="radio3">
+            <label for="radio3">Resolt on negative</label>
             <input type="range" name="range" id="range" value="80" min="0" max="255">
             <label for="range">Accuracy </label>
+            <input type="range" name="opacity" id="opacity" value="50" min="0" max="100">
+            <label for="opacity">Color or not</label>
         </form>
         <button class="compare">Compare</button>
         <div class="files">
-            <div class="first">
-                <img src="" alt="1">
+            <div class="first target">
+                <!-- <img src="/Img/1.jpg" alt="1"> -->
             </div>
-            <div class="second">
-                <img src="" alt="3">
+            <div class="second target">
+                <!-- <img src="/Img/1.jpg" alt="3"> -->
             </div>
         </div>
         <div class="resolt">

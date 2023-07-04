@@ -4,12 +4,30 @@
     height: 50vh;
 }
 
-.first .second {
+.first,
+.second {
     flex-grow: 1;
+    min-width: 50%;
 }
 
-/* img {
+img {
     height: 100%;
     width: 100%;
     object-fit: cover;
-} */
+}
+
+.drag-target {
+    background-color: #ff0000;
+}
+
+.negative {
+    position: absolute;
+    filter: invert(1);
+    left: 0;
+    top: 0;
+}
+
+.resolt {
+    position: relative;
+
+}

@@ -1,8 +1,10 @@
-const image1 = document.querySelector(".first > img");
-const image2 = document.querySelector(".second > img");
+const opacity = document.querySelector("#opacity")
+const targets = document.querySelectorAll(".target");
+const firstDiv = document.querySelector(".first");
+const secondDiv = document.querySelector(".second");
 const resolt = document.querySelector(".resolt");
-const firstImage = document.querySelector("#first-image");
-const secondImage = document.querySelector("#second-image");
+const firstImageInput = document.querySelector("#first-image");
+const secondImageInput = document.querySelector("#second-image");
 const compare = document.querySelector(".compare");
 const color = document.querySelector("#color");
 const radio = document.querySelectorAll("input[name='chack-type']");
@@ -11,8 +13,8 @@ const range = document.querySelector("#range");
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
-const reader1 = new FileReader();
-const reader2 = new FileReader();
+
+
 let allLoaded = 0;
 
 const radioValue = () => {
@@ -22,13 +24,8 @@ const radioValue = () => {
             value = i.value;
         }
     })
-    console.log(value);
     return value;
-
 }
-
-image1.addEventListener("loaded", () => { console.log("loaded the 1"); });
-image2.addEventListener("loaded", () => { console.log("loaded the 2"); });
 
 const drawPixel = (context, x, y, color) => {
     context.fillStyle = color || '#000';
@@ -44,44 +41,53 @@ const getCanvasData = (canvas, image) => {
     return { imageData, context };
 };
 
-secondImage.addEventListener('change', (event) => {
-    if (!!event.target.files.length) {
+const readImage = (file, target) => {
 
-        const fileList = event.target.files;
-        image2.file = fileList[0]
-        reader2.addEventListener('load', (event) => {
-            image2.src = event.target.result;
-            console.log("image2 loaded");
-
-            if (allLoaded < 2) {
-                allLoaded += 1;
-            };
-        });
-        reader2.readAsDataURL(fileList[0]);
-
-    } else {
+    if (file.type && !file.type.startsWith('image/')) {
+        console.log('File is not an image.', file.type, file);
         allLoaded -= 1;
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.addEventListener('load', (event) => {
+        const image = new Image()
+        image.src = event.target.result;
+        target.appendChild(image);
+        console.log(111);
+    });
+
+    reader.readAsDataURL(file);
+
+    if (allLoaded < 2) {
+        allLoaded += 1;
     };
-});
+};
 
-firstImage.addEventListener('change', (event) => {
+firstImageInput.addEventListener('change', (event) => { readImage(event.target.files[0], firstDiv) });
+secondImageInput.addEventListener('change', (event) => { readImage(event.target.files[0], secondDiv) });
 
-    if (!!event.target.files.length) {
-        const fileList = event.target.files;
-        image1.file = fileList[0]
-        reader1.addEventListener('load', (event) => {
-            image1.src = event.target.result;
-            console.log("image1 loaded");
-            if (allLoaded < 2) {
-                allLoaded += 1;
-            };
-        });
-        reader1.readAsDataURL(fileList[0]);
-    } else {
-        allLoaded -= 1;
-    };
+targets.forEach((e) => {
+    e.addEventListener('dragover', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+        console.log(event.target);
+        event.target.classList.add('drag-target')
+    });
 
-});
+    e.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
+
+    e.addEventListener('drop', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const fileList = event.dataTransfer.files;
+        console.log(fileList);
+        readImage(fileList[0], e);
+    });
+})
+
 
 const definedXY = ({ index, width }) => {
     let x = Math.floor((index / 4) % width + 1);
@@ -102,8 +108,37 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 const comparation = () => {
     if (allLoaded === 2) {
 
-        const { imageData: imageData1 } = getCanvasData(canvas1, image1);
-        const { imageData: imageData2, context: context2 } = getCanvasData(canvas2, image2);
+        const imgae1 = new Image();
+        imgae1.src = firstDiv.querySelector("img").src
+        const imgae2 = new Image();
+        imgae2.src = secondDiv.querySelector("img").src
+
+        const { imageData: imageData1 } = getCanvasData(canvas1, imgae1);
+        const { imageData: imageData2, context: context2 } = getCanvasData(canvas2, imgae2);
+
+        if (radioValue() == 2) {
+            resolt.innerHTML = "";
+            resolt.appendChild(canvas1);
+            canvas2.classList.add("negative")
+            console.log(opacity.value);
+            canvas2.style.opacity = `${opacity.value / 100}`
+            resolt.appendChild(canvas2);
+            opacity.addEventListener('change', () => { canvas2.style.opacity = `${opacity.value / 100}` })
+            return
+            // resolt.innerHTML = "";
+            // resolt.appendChild(imgae1);
+            // imgae2.classList.add("negative")
+            // console.log(opacity.value);
+            // imgae2.style.opacity = `${opacity.value / 100}`
+            // resolt.appendChild(imgae2);
+            // opacity.addEventListener('change', () => { imgae2.style.opacity = `${opacity.value / 100}` })
+            // return
+        }
+
+        if (radioValue() == 1) {
+            context2.fillStyle = "#ffff";
+            context2.fillRect(0, 0, canvas1.width, canvas1.height);
+        };
 
 
         for (let index = 0; index < (canvas1.width * canvas1.height * 4); index += 4) {
@@ -125,17 +160,16 @@ const comparation = () => {
 
                 let x = definedXY({ index, width: canvas1.width }).x;
                 let y = definedXY({ index, width: canvas1.width }).y;
-
                 drawPixel(context2, x, y, color.value);
 
-            }
+            };
 
 
         }
+        resolt.innerHTML = "";
         resolt.appendChild(canvas2);
-        console.log(allLoaded);
+
     };
-    console.log(allLoaded);
 
 };
 

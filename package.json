@@ -1,0 +1,22 @@
+{
+  "name": "pdf_difference",
+  "version": "1.0.0",
+  "description": "aplication for pdf comparation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mellivor/pdf_difference.git"
+  },
+  "author": "Dmytro Rybak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mellivor/pdf_difference/issues"
+  },
+  "homepage": "https://github.com/Mellivor/pdf_difference#readme",
+  "dependencies": {
+    "pdfjs-dist": "^3.8.162"
+  }
+}

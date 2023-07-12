@@ -18,8 +18,44 @@ const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
 
-
 let allLoaded = 0;
+
+const pdfHendler = async (canvas, pageNum, file) => {
+    // const pdfHendler = async (pageNum) => {
+    // const fileArray = new Uint8Array(file);
+    // console.log(fileArray);
+    const pdf = await pdfjsLib.getDocument(file).promise;
+    // const pdf = await pdfjsLib.getDocument('helloworld.pdf').promise;
+
+    const pdfPage = await pdf.getPage(pageNum);
+    // const pdfPage = await pdf.getPage(1);
+    const outputScale = window.devicePixelRatio || 1
+    // var canvas = document.getElementById('the-canvas');
+    var context = canvas.getContext('2d');
+    var viewport = pdfPage.getViewport({ scale: 2 });
+    console.log(pdfPage.getViewport({ scale: 2 }));
+    console.log(pdfPage.getViewport(1));
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    canvas.style.width = Math.floor(viewport.width) + "px";
+    canvas.style.height = Math.floor(viewport.height) + "px";
+
+    var transform = outputScale !== 1
+        ? [outputScale, 0, 0, outputScale, 0, 0]
+        : null;
+    var viewport = pdfPage.getViewport({ scale: 1.5 });
+
+    console.log(transform);
+    const renderContext = {
+        canvasContext: context,
+        transform: transform,
+        viewport: viewport
+    };
+
+    pdfPage.render(renderContext);
+};
+
+
 
 const radioValue = () => {
     let value;
@@ -53,19 +89,30 @@ const readImage = (file, target) => {
         return;
     };
 
-    if (file.type && !file.type.startsWith('image/')) {
-        console.log('File is not an image.', file.type, file);
-        allLoaded -= 1;
-        return;
-    }
+
+    // if (file.type && !file.type.startsWith('image/', 'pdf/')) {
+    //     console.log('File is not an image.', file.type, file);
+    //     allLoaded -= 1;
+    //     return;
+    // }
+
+
+    // if (file.type.startsWith('pdf/')) {
+
+    //     pdfHendler(canvas2.getContext('2d'), 1, file);
+    //     allLoaded -= 1;
+    //     return;
+    // }
 
     const reader = new FileReader();
 
     reader.addEventListener('load', (event) => {
-        const image = new Image()
-        image.src = event.target.result;
-        target.innerHTML = '';
-        target.appendChild(image);
+        pdfHendler(canvas1, 1, event.target.result);
+        target.appendChild(canvas1)
+        // const image = new Image()
+        // image.src = event.target.result;
+        // target.innerHTML = '';
+        // target.appendChild(image);
     });
 
     reader.readAsDataURL(file);
@@ -186,31 +233,34 @@ const comparation = () => {
 
 compare.addEventListener("click", comparation)
 
-var loadingTask = pdfjsLib.getDocument('helloworld.pdf');
-loadingTask.promise.then(function (pdf) {
-    pdf.getPage(1).then(function (page) {
-        var scale = 1.5;
-        var viewport = page.getViewport({ scale: scale, });
-        // Support HiDPI-screens.
-        var outputScale = window.devicePixelRatio || 1;
+// const render = async () => {
+//     var loadingTask = await pdfjsLib.getDocument('helloworld.pdf').promise;
+//     // loadingTask.promise.then(function (pdf) {
+//     loadingTask.getPage(1).then(function (page) {
+//         var scale = 1.5;
+//         var viewport = page.getViewport({ scale: scale, });
+//         // Support HiDPI-screens.
+//         var outputScale = window.devicePixelRatio || 1;
 
-        var canvas = document.getElementById('the-canvas');
-        var context = canvas.getContext('2d');
+//         var canvas = document.getElementById('the-canvas');
+//         var context = canvas.getContext('2d');
 
-        canvas.width = Math.floor(viewport.width * outputScale);
-        canvas.height = Math.floor(viewport.height * outputScale);
-        canvas.style.width = Math.floor(viewport.width) + "px";
-        canvas.style.height = Math.floor(viewport.height) + "px";
+//         canvas.width = Math.floor(viewport.width * outputScale);
+//         canvas.height = Math.floor(viewport.height * outputScale);
+//         canvas.style.width = Math.floor(viewport.width) + "px";
+//         canvas.style.height = Math.floor(viewport.height) + "px";
 
-        var transform = outputScale !== 1
-            ? [outputScale, 0, 0, outputScale, 0, 0]
-            : null;
+//         var transform = outputScale !== 1
+//             ? [outputScale, 0, 0, outputScale, 0, 0]
+//             : null;
 
-        var renderContext = {
-            canvasContext: context,
-            transform: transform,
-            viewport: viewport
-        };
-        page.render(renderContext);
-    });
-});
+//         var renderContext = {
+//             canvasContext: context,
+//             transform: transform,
+//             viewport: viewport
+//         };
+//         page.render(renderContext);
+//     });
+//     // });
+// };
+// render();

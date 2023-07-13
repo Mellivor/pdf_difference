@@ -13,7 +13,8 @@ body {
 .first,
 .second {
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: scroll;
+    /* overflow: hidden; */
     margin: 1%;
     flex-grow: 1;
     width: 48%;
@@ -26,7 +27,7 @@ body {
 img {
     height: 100%;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .drag-target {

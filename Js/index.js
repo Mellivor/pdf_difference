@@ -1,7 +1,4 @@
-// const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
-console.log(pdfjsLib.getDocument('helloworld.pdf'));
-
-
+let pageNumber = 1;
 const opacity = document.querySelector("#opacity")
 const targets = document.querySelectorAll(".target");
 const firstDiv = document.querySelector(".first");
@@ -13,7 +10,6 @@ const compare = document.querySelector(".compare");
 const color = document.querySelector("#color");
 const radio = document.querySelectorAll("input[name='chack-type']");
 const range = document.querySelector("#range");
-
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
@@ -21,41 +17,41 @@ const canvasRes = document.createElement('canvas');
 let allLoaded = 0;
 
 const pdfHendler = async (canvas, pageNum, file) => {
-    // const pdfHendler = async (pageNum) => {
-    // const fileArray = new Uint8Array(file);
-    // console.log(fileArray);
+    console.log(pageNum);
     const pdf = await pdfjsLib.getDocument(file).promise;
-    // const pdf = await pdfjsLib.getDocument('helloworld.pdf').promise;
 
     const pdfPage = await pdf.getPage(pageNum);
-    // const pdfPage = await pdf.getPage(1);
+
     const outputScale = window.devicePixelRatio || 1
-    // var canvas = document.getElementById('the-canvas');
-    var context = canvas.getContext('2d');
-    var viewport = pdfPage.getViewport({ scale: 2 });
-    console.log(pdfPage.getViewport({ scale: 2 }));
-    console.log(pdfPage.getViewport(1));
+    // const canvasx = document.querySelector('#the-canvas')
+    const context = canvas.getContext('2d');
+    const viewport = pdfPage.getViewport({ scale: 2 });
+    // const viewport = pdfPage.getViewport(1);
+    console.log(viewport);
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
     canvas.style.width = Math.floor(viewport.width) + "px";
     canvas.style.height = Math.floor(viewport.height) + "px";
 
-    var transform = outputScale !== 1
-        ? [outputScale, 0, 0, outputScale, 0, 0]
-        : null;
-    var viewport = pdfPage.getViewport({ scale: 1.5 });
+    // var transform = outputScale !== 1
+    //     ? [outputScale, 0, 0, outputScale, 0, 0]
+    //     : null;
+    // var viewport = pdfPage.getViewport({ scale: 1.5 });
 
-    console.log(transform);
     const renderContext = {
         canvasContext: context,
-        transform: transform,
+        transform: false,
         viewport: viewport
     };
-
+    console.log(pdfPage);
     pdfPage.render(renderContext);
 };
 
+const isFileValid = (file) => {
+    const acceptedTypes = ['image/gif', 'image/jpeg', 'image/png', 'application/pdf'];
 
+    return file && acceptedTypes.includes(file['type'])
+}
 
 const radioValue = () => {
     let value;
@@ -72,16 +68,13 @@ const drawPixel = (context, x, y, color) => {
     context.fillRect(x, y, 1, 1);
 }
 
-const getCanvasData = (canvas, image) => {
-    canvas.width = image.width;
-    canvas.height = image.height;
+const getCanvasData = (canvas) => {
     const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     return { imageData, context };
 };
 
-const readImage = (file, target) => {
+const readFile = (file, target, canvas) => {
 
     if (!file) {
         allLoaded -= 1;
@@ -91,13 +84,14 @@ const readImage = (file, target) => {
 
 
     // if (file.type && !file.type.startsWith('image/', 'pdf/')) {
-    //     console.log('File is not an image.', file.type, file);
-    //     allLoaded -= 1;
-    //     return;
-    // }
+    if (!isFileValid(file)) {
+        console.log('File is not an image.', file.type, file);
+        allLoaded -= 1;
+        return;
+    }
 
 
-    // if (file.type.startsWith('pdf/')) {
+    // if (file.type.startsWith('application/pdf')) {
 
     //     pdfHendler(canvas2.getContext('2d'), 1, file);
     //     allLoaded -= 1;
@@ -106,14 +100,31 @@ const readImage = (file, target) => {
 
     const reader = new FileReader();
 
-    reader.addEventListener('load', (event) => {
-        pdfHendler(canvas1, 1, event.target.result);
-        target.appendChild(canvas1)
-        // const image = new Image()
-        // image.src = event.target.result;
-        // target.innerHTML = '';
-        // target.appendChild(image);
-    });
+    reader.onloadend = (event) => {
+        const image = new Image()
+        if (file.type.startsWith('application/pdf')) {
+            pdfHendler(canvas, pageNumber, event.target.result);
+            console.log(canvas.width);
+            setTimeout(() => {
+                image.src = canvas.toDataURL();
+                console.log(canvas.toDataURL())
+
+            }, 400);
+            // image.src = canvas.toDataURL();
+
+            // console.log(dataUrl)
+            // target.appendChild(canvas);
+            // target.appendChild(canvas1);
+        } else {
+            image.src = event.target.result;
+        };
+
+        target.innerHTML = '';
+        target.appendChild(image);
+        // image.src = canvas.toDataURL();
+        // resolt.appendChild(image);
+        // target.appendChild(canvas);
+    };
 
     reader.readAsDataURL(file);
 
@@ -122,28 +133,49 @@ const readImage = (file, target) => {
     };
 };
 
-firstImageInput.addEventListener('change', (event) => { readImage(event.target.files[0], firstDiv) });
-secondImageInput.addEventListener('change', (event) => { readImage(event.target.files[0], secondDiv) });
+firstImageInput.addEventListener('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1) });
+secondImageInput.addEventListener('change', (event) => { readFile(event.target.files[0], secondDiv, canvas2) });
 
-targets.forEach((e) => {
-    e.addEventListener('dragover', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'copy';
-        console.log(event.target);
-        event.target.classList.add('drag-target')
-    });
+const dragHendler = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    event.target.classList.add('drag-target')
+};
 
-    e.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
+const dropHendler = (event, targetDiv, canvas) => {
+    event.stopPropagation();
+    event.preventDefault();
+    const fileList = event.dataTransfer.files;
+    readFile(fileList[0], targetDiv, canvas);
+};
 
-    e.addEventListener('drop', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        const fileList = event.dataTransfer.files;
-        console.log(fileList);
-        readImage(fileList[0], e);
-    });
-})
+firstDiv.addEventListener('dragover', dragHendler);
+firstDiv.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
+firstDiv.addEventListener('drop', (event) => { dropHendler(event, firstDiv, canvas1) });
+secondDiv.addEventListener('dragover', dragHendler);
+secondDiv.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
+secondDiv.addEventListener('drop', (event) => { dropHendler(event, secondDiv, canvas2) });
+
+// targets.forEach((e) => {
+//     e.addEventListener('dragover', (event) => {
+//         event.stopPropagation();
+//         event.preventDefault();
+//         event.dataTransfer.dropEffect = 'copy';
+//         console.log(event.target);
+//         event.target.classList.add('drag-target')
+//     });
+
+//     e.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
+
+//     e.addEventListener('drop', (event) => {
+//         event.stopPropagation();
+//         event.preventDefault();
+//         const fileList = event.dataTransfer.files;
+//         console.log(e);
+//         readFile(fileList[0], e, canvas1);
+//     });
+// })
 
 
 const definedXY = ({ index, width }) => {
@@ -166,20 +198,20 @@ const comparation = () => {
     console.log(allLoaded);
     if (allLoaded === 2) {
 
-        const imgae1 = new Image();
-        imgae1.src = firstDiv.querySelector("img").src
-        const imgae2 = new Image();
-        imgae2.src = secondDiv.querySelector("img").src
+        //const imgae1 = new Image();
+        //imgae1.src = firstDiv.querySelector("img").src
+        //const imgae2 = new Image();
+        //imgae2.src = secondDiv.querySelector("img").src
 
-        const { imageData: imageData1 } = getCanvasData(canvas1, imgae1);
-        const { imageData: imageData2, context: context2 } = getCanvasData(canvas2, imgae2);
+        const { imageData: imageData1 } = getCanvasData(canvas1);
+        const { imageData: imageData2, context: context2 } = getCanvasData(canvas2);
 
         if (radioValue() == 2) {
             resolt.innerHTML = "";
             resolt.appendChild(canvas1);
             canvas2.classList.add("negative")
             console.log(opacity.value);
-            canvas2.style.opacity = `${opacity.value / 100}`
+            canvas2.style.opacity = `${opacity.value / 100}`;
             resolt.appendChild(canvas2);
             opacity.addEventListener('change', () => { canvas2.style.opacity = `${opacity.value / 100}` })
             return
@@ -187,9 +219,9 @@ const comparation = () => {
             // resolt.appendChild(imgae1);
             // imgae2.classList.add("negative")
             // console.log(opacity.value);
-            // imgae2.style.opacity = `${opacity.value / 100}`
+            // imgae2.style.opacity = ${opacity.value / 100}
             // resolt.appendChild(imgae2);
-            // opacity.addEventListener('change', () => { imgae2.style.opacity = `${opacity.value / 100}` })
+            // opacity.addEventListener('change', () => { imgae2.style.opacity = ${opacity.value / 100} })
             // return
         }
 
@@ -232,35 +264,3 @@ const comparation = () => {
 };
 
 compare.addEventListener("click", comparation)
-
-// const render = async () => {
-//     var loadingTask = await pdfjsLib.getDocument('helloworld.pdf').promise;
-//     // loadingTask.promise.then(function (pdf) {
-//     loadingTask.getPage(1).then(function (page) {
-//         var scale = 1.5;
-//         var viewport = page.getViewport({ scale: scale, });
-//         // Support HiDPI-screens.
-//         var outputScale = window.devicePixelRatio || 1;
-
-//         var canvas = document.getElementById('the-canvas');
-//         var context = canvas.getContext('2d');
-
-//         canvas.width = Math.floor(viewport.width * outputScale);
-//         canvas.height = Math.floor(viewport.height * outputScale);
-//         canvas.style.width = Math.floor(viewport.width) + "px";
-//         canvas.style.height = Math.floor(viewport.height) + "px";
-
-//         var transform = outputScale !== 1
-//             ? [outputScale, 0, 0, outputScale, 0, 0]
-//             : null;
-
-//         var renderContext = {
-//             canvasContext: context,
-//             transform: transform,
-//             viewport: viewport
-//         };
-//         page.render(renderContext);
-//     });
-//     // });
-// };
-// render();

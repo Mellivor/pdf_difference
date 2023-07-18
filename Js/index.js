@@ -1,9 +1,14 @@
+// import getDocument from '../node_modules/pdfjs-dist/build/pdf.js'
+// import getViewport from '../node_modules/pdfjs-dist/build/pdf.js'
+// import pdfjsLib from '../node_modules/pdfjs-dist/build/pdf.js'
+// import * as pdfjsLib from '../pdfjs-dist';
+
 let pageNumber = 1;
 const opacity = document.querySelector("#opacity")
 const targets = document.querySelectorAll(".target");
 const firstDiv = document.querySelector(".first");
 const secondDiv = document.querySelector(".second");
-const resolt = document.querySelector(".resolt");
+const resolt = document.querySelector(".result");
 const firstImageInput = document.querySelector("#first-image");
 const secondImageInput = document.querySelector("#second-image");
 const compare = document.querySelector(".compare");
@@ -17,16 +22,11 @@ const canvasRes = document.createElement('canvas');
 let allLoaded = 0;
 
 const pdfHendler = async (canvas, pageNum, file) => {
-    console.log(pageNum);
     const pdf = await pdfjsLib.getDocument(file).promise;
-
     const pdfPage = await pdf.getPage(pageNum);
-
     const outputScale = window.devicePixelRatio || 1
-    // const canvasx = document.querySelector('#the-canvas')
     const context = canvas.getContext('2d');
     const viewport = pdfPage.getViewport({ scale: 2 });
-    // const viewport = pdfPage.getViewport(1);
     console.log(viewport);
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
@@ -43,8 +43,7 @@ const pdfHendler = async (canvas, pageNum, file) => {
         transform: false,
         viewport: viewport
     };
-    console.log(pdfPage);
-    pdfPage.render(renderContext);
+    await pdfPage.render(renderContext).promise;
 };
 
 const isFileValid = (file) => {
@@ -100,17 +99,18 @@ const readFile = (file, target, canvas) => {
 
     const reader = new FileReader();
 
-    reader.onloadend = (event) => {
+    reader.onloadend = async (event) => {
         const image = new Image()
         if (file.type.startsWith('application/pdf')) {
-            pdfHendler(canvas, pageNumber, event.target.result);
-            console.log(canvas.width);
-            setTimeout(() => {
-                image.src = canvas.toDataURL();
-                console.log(canvas.toDataURL())
+            console.log("start");
+            // const somthing = await pdfHendler(canvas, pageNumber, event.target.result);
+            await pdfHendler(canvas, pageNumber, event.target.result);
+            // setTimeout(() => {
+            //     image.src = canvas.toDataURL();
+            //     console.log(canvas.toDataURL())
 
-            }, 400);
-            // image.src = canvas.toDataURL();
+            // }, 600);
+            image.src = canvas.toDataURL();
 
             // console.log(dataUrl)
             // target.appendChild(canvas);

@@ -15,11 +15,11 @@
         <form action="#">
             <div class="file-interface">
                 <div class="first-file-interface">
-                    <input type="file" id="first-image" name="avatar" accept="image/png, image/jpeg">
+                    <input type="file" id="first-image" name="avatar" accept="image/png, image/jpeg, application/pdf">
                     <label for="first-image">Chose first image</label>
                 </div>
                 <div class="second-file-interface">
-                    <input type="file" id="second-image" name="avatar" accept="image/png, image/jpeg">
+                    <input type="file" id="second-image" name="avatar" accept="image/png, image/jpeg, application/pdf">
                     <label for="first-image">Chose second image</label>
                 </div>
             </div>
@@ -27,15 +27,15 @@
                 <input type="range" name="range" id="range" value="180" min="0" max="255">
                 <label for="range">Accuracy </label>
                 <input type="color" name="color" id="color" value="#FF69B4">
-                <label for="color">Add differerensed pixels color</label>
+                <label for="color">Add differerenced pixels color</label>
                 <input type="radio" name="chack-type" value="0" checked id="radio1">
-                <label for="radio1">Resolt on first image</label>
+                <label for="radio1">Result on first image</label>
                 <input type="radio" name="chack-type" value="1" id="radio2">
-                <label for="radio2">Resolt on white sheet</label>
+                <label for="radio2">Result on white sheet</label>
             </div>
             <div>
                 <input type="radio" name="chack-type" value="2" id="radio3">
-                <label for="radio3">Resolt on negative</label>
+                <label for="radio3">Result on negative</label>
                 <input type="range" name="opacity" id="opacity" value="50" min="0" max="100">
                 <label for="opacity">Color or not</label>
             </div>
@@ -51,14 +51,17 @@
             </div>
         </div>
         <button class="compare">Compare</button>
-        <div class="resolt">
+        <div class="result">
 
         </div>
     </main>
 </body>
-<script src="../../node_modules/pdfjs-dist/build/pdf.js"></script>
-<script src="../../node_modules/pdfjs-dist/web/pdf_viewer.js"></script>
-<script src="./Js/index.js"></script>
+<!-- <script src="../../node_modules/pdfjs-dist/build/pdf.js"></script>
+<script src="../../node_modules/pdfjs-dist/web/pdf_viewer.js"></script> -->
+<script src="pdfjs-dist/build/pdf.js"></script>
+<!-- <script src="/pdf.js"></script> -->
+<script src="pdfjs-dist/web/pdf_viewer.js"></script>
+<script type="module" src="./Js/index.js"></script>
 
 
 </html>

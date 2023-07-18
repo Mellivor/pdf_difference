@@ -13,8 +13,8 @@ body {
 .first,
 .second {
     box-sizing: border-box;
-    overflow: scroll;
-    /* overflow: hidden; */
+    /* overflow: scroll; */
+    overflow: hidden;
     margin: 1%;
     flex-grow: 1;
     width: 48%;

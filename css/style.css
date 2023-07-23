@@ -4,9 +4,9 @@ body {
     padding: 0;
 }
 
-.file-interface {
+/* .file-interface {
     display: none;
-}
+} */
 
 .page_control {
     display: flex;
@@ -71,4 +71,20 @@ img {
 
 .compare {
     /* width: 100%; */
+}
+
+#page_doc_1::-webkit-outer-spin-button,
+#page_doc_2::-webkit-outer-spin-button,
+#page_doc_1::-webkit-inner-spin-button,
+#page_doc_2::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    border: 0;
+}
+
+
+input[type=number] {
+    -moz-appearance: textfield;
+    border: 0;
+    text-align: center;
 }

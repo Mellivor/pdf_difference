@@ -5,8 +5,8 @@ const targets = document.querySelectorAll(".target");
 const firstDiv = document.querySelector(".first");
 const secondDiv = document.querySelector(".second");
 const resolt = document.querySelector(".result");
-const firstImageInput = document.querySelector("#first-file");
-const secondImageInput = document.querySelector("#second-file");
+const firstFileInput = document.querySelector("#first-file");
+const secondFileInput = document.querySelector("#second-file");
 const compare = document.querySelector(".compare");
 const color = document.querySelector("#color");
 const radio = document.querySelectorAll("input[name='chack-type']");
@@ -16,6 +16,10 @@ const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
 const firstPageInput = document.querySelector("#page_doc_1");
 const secondPageInput = document.querySelector("#page_doc_2");
+const lower1Arow = document.querySelector(".lower1");
+const lower2Arow = document.querySelector(".lower2");
+const higher1Arow = document.querySelector(".higher1");
+const higher2Arow = document.querySelector(".higher2");
 
 let allLoaded = 0;
 
@@ -132,16 +136,19 @@ const readFile = (file, target, canvas, pageNum) => {
     };
 };
 
-firstImageInput.addEventListener('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
-secondImageInput.addEventListener('change', (event) => { readFile(event.target.files[0], secondDiv, canvas2, secondPageNumber) });
+firstFileInput.addEventListener('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
+secondFileInput.addEventListener('change', (event) => { readFile(event.target.files[0], secondDiv, canvas2, secondPageNumber) });
 firstPageInput.addEventListener('change', () => {
     firstPageNumber = firstPageInput.value;
-    console.log(firstPageNumber);
 });
 secondPageInput.addEventListener('change', () => {
     secondPageNumber = secondPageInput.value;
-    console.log(secondPageNumber);
 });
+
+lower1Arow.addEventListener("click", () => { firstPageInput.stepDown() });
+lower2Arow.addEventListener("click", () => { secondPageInput.stepDown() });
+higher1Arow.addEventListener("click", () => { firstPageInput.stepUp() });
+higher2Arow.addEventListener("click", () => { secondPageInput.stepUp() });
 
 
 const dragHendler = (event) => {
@@ -159,11 +166,19 @@ const dropHendler = (event, targetDiv, canvas, pageNum) => {
 };
 
 firstDiv.addEventListener('dragover', dragHendler);
-firstDiv.addEventListener('click', () => { firstImageInput.click() });
+firstDiv.addEventListener('click', () => { firstFileInput.click() });
 firstDiv.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
 firstDiv.addEventListener('drop', (event) => { dropHendler(event, firstDiv, canvas1, firstPageNumber) });
+// firstDiv.addEventListener('drop', (event) => {
+//     const fileList = event.dataTransfer.files[0];
+//     debugger;
+//     firstFileInput.files[0] = fileList
+//     console.log(fileList);
+//     console.log(firstFileInput.files);
+//     console.log(firstFileInput.files[0]);
+// });
 secondDiv.addEventListener('dragover', dragHendler);
-secondDiv.addEventListener('click', () => { secondImageInput.click() });
+secondDiv.addEventListener('click', () => { secondFileInput.click() });
 secondDiv.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
 secondDiv.addEventListener('drop', (event) => { dropHendler(event, secondDiv, canvas2, secondPageNumber) });
 

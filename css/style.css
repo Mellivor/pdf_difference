@@ -4,6 +4,16 @@ body {
     padding: 0;
 }
 
+.file-interface {
+    display: none;
+}
+
+.page_control {
+    display: flex;
+    justify-content: space-around;
+    padding: 0 1%;
+}
+
 .files {
     display: flex;
     width: 100vw;
@@ -50,7 +60,7 @@ img {
 
 }
 
-i {
+.fa-file-pdf {
     pointer-events: none;
     position: absolute;
     top: 50%;

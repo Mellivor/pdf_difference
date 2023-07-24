@@ -4,9 +4,19 @@ body {
     padding: 0;
 }
 
-/* .file-interface {
+.control-form__file-interface_hidden {
     display: none;
-} */
+}
+
+.control-form {
+    display: flex;
+}
+
+/* .control-form__negative-mode-controls_hidden, */
+.control-form__standart-mode-controls_hidden {
+    visibility: hidden;
+    opacity: 0;
+}
 
 .page_control {
     display: flex;

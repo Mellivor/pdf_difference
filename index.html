@@ -12,28 +12,28 @@
 
 <body>
     <main class="main">
-        <form action="#">
-            <div class="file-interface">
-                <div class="first-file-interface">
-                    <input type="file" id="first-file" name="avatar" accept="image/png, image/jpeg, application/pdf">
-                </div>
-                <div class="second-file-interface">
-                    <input type="file" id="second-file" name="avatar" accept="image/png, image/jpeg, application/pdf">
-                </div>
+        <form action="#" class="control-form">
+            <div class="control-form__file-interface control-form__file-interface_hidden">
+                <input type="file" id="first-file" class="control-form__first-file-input" name="avatar"
+                    accept="image/png, image/jpeg, application/pdf">
+                <input type="file" id="second-file" class="control-form__second-file-input" name="avatar"
+                    accept="image/png, image/jpeg, application/pdf">
             </div>
-            <div>
-                <input type="range" name="range" id="range" value="180" min="0" max="255">
-                <label for="range">Accuracy </label>
-                <input type="color" name="color" id="color" value="#FF69B4">
-                <label for="color">Add differerenced pixels color</label>
+            <div class="control-form__radio-block">
                 <input type="radio" name="chack-type" value="0" checked id="radio1">
                 <label for="radio1">Result on first image</label>
                 <input type="radio" name="chack-type" value="1" id="radio2">
                 <label for="radio2">Result on white sheet</label>
-            </div>
-            <div>
                 <input type="radio" name="chack-type" value="2" id="radio3">
                 <label for="radio3">Result on negative</label>
+            </div>
+            <div class="control-form__standart-mode-controls control-form__standart-mode-controls_hidden">
+                <input type="range" name="range" id="range" value="180" min="0" max="255">
+                <label for="range">Accuracy </label>
+                <input type="color" name="color" id="color" value="#FF69B4">
+                <label for="color">Add differerenced pixels color</label>
+            </div>
+            <div class="control-form__negative-mode-controls control-form__negative-mode-controls_hidden">
                 <input type="range" name="opacity" id="opacity" value="50" min="0" max="100">
                 <label for="opacity">Color or not</label>
             </div>

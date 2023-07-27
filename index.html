@@ -20,44 +20,53 @@
                     accept="image/png, image/jpeg, application/pdf">
             </div>
             <div class="control-form__radio-block">
-                <input type="radio" name="chack-type" value="0" checked id="radio1">
+                <input type="radio" name="chack-type" value="0" checked id="radio1"
+                    class="control-form__radio-first-mode">
                 <label for="radio1">Result on first image</label>
-                <input type="radio" name="chack-type" value="1" id="radio2">
+                <input type="radio" name="chack-type" value="1" id="radio2" class="control-form__radio-second-mode">
                 <label for="radio2">Result on white sheet</label>
-                <input type="radio" name="chack-type" value="2" id="radio3">
+                <input type="radio" name="chack-type" value="2" id="radio3" class="control-form__radio-third-mode">
                 <label for="radio3">Result on negative</label>
             </div>
-            <div class="control-form__standart-mode-controls control-form__standart-mode-controls_hidden">
-                <input type="range" name="range" id="range" value="180" min="0" max="255">
+            <div class="control-form__standart-mode-controls
+            control-form__standart-mode-controls_hidden
+            control-form__standart-mode-controls_width-0">
+                <input type="range" name="range" id="range" value="180" min="0" max="255"
+                    class="control-form__accuracy-slider">
                 <label for="range">Accuracy </label>
-                <input type="color" name="color" id="color" value="#FF69B4">
+                <input type="color" name="color" id="color" value="#FF69B4" class="control-form__color-input">
                 <label for="color">Add differerenced pixels color</label>
             </div>
-            <div class="control-form__negative-mode-controls control-form__negative-mode-controls_hidden">
-                <input type="range" name="opacity" id="opacity" value="50" min="0" max="100">
+            <div class="control-form__negative-mode-controls
+            control-form__negative-mode-controls_hidden
+            control-form__negative-mode-controls_width-0">
+                <input type="range" name="opacity" id="opacity" value="50" min="0" max="100"
+                    class="control-form__negative-opacity-slider">
                 <label for="opacity">Color or not</label>
             </div>
         </form>
-        <div class="files">
-            <div class="first target">
-                <i class="fa-sharp fa-solid fa-file-pdf"></i>
+        <div class="preview-box">
+            <div class="preview-box__first-card">
+                <i class="preview-box__pdf-icon fa-sharp fa-solid fa-file-pdf"></i>
                 Drag pdf or click
             </div>
-            <div class="second target">
-                <i class="fa-sharp fa-solid fa-file-pdf"></i>
+            <div class="preview-box__second-card">
+                <i class="preview-box__pdf-icon fa-sharp fa-solid fa-file-pdf"></i>
                 Drag pdf or click
             </div>
         </div>
-        <div class="page_control">
-            <i class="fa-solid fa-angle-left lower1"></i>
-            <input type="number" name="first_page_input" id="page_doc_1" value="1" min="1">
-            <i class="fa-solid fa-angle-right higher1"></i>
-            <i class="fa-solid fa-angle-left lower2"></i>
-            <input type="number" name="second_page_input" id="page_doc_2" value="1" min="1">
-            <i class="fa-solid fa-angle-right higher2"></i>
+        <div class="page-control">
+            <i class="page-control__lower-first-arrow fa-solid fa-angle-left lower1"></i>
+            <input type="number" name="first_page_input" id="page_doc_1" value="1" min="1"
+                class="page-control__first-page-input">
+            <i class="page-control__higher-first-arrow fa-solid fa-angle-right higher1"></i>
+            <button class="compare-button">Compare</button>
+            <i class="page-control__lower-second-arrow fa-angle-left lower2"></i>
+            <input type="number" name="second_page_input" id="page_doc_2" value="1" min="1"
+                class="page-control__second-page-input">
+            <i class="page-control__higher-second-arrow fa-angle-right higher2"></i>
         </div>
-        <button class="compare">Compare</button>
-        <div class="result">
+        <div class="result-box">
 
         </div>
     </main>

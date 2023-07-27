@@ -1,25 +1,24 @@
 let firstPageNumber = 1;
 let secondPageNumber = 1;
-const opacity = document.querySelector("#opacity")
-const targets = document.querySelectorAll(".target");
-const firstDiv = document.querySelector(".first");
-const secondDiv = document.querySelector(".second");
-const resolt = document.querySelector(".result");
+const opacity = document.querySelector(".control-form__negative-opacity-slider")
+const firstDiv = document.querySelector(".preview-box__first-card");
+const secondDiv = document.querySelector(".preview-box__second-card");
+const resolt = document.querySelector(".result-box");
 const firstFileInput = document.querySelector(".control-form__first-file-input");
-const secondFileInput = document.querySelector(".control-form__secind-file-input");
-const compare = document.querySelector(".compare");
-const color = document.querySelector("#color");
-const radio = document.querySelectorAll("input[name='chack-type']");
-const range = document.querySelector("#range");
+const secondFileInput = document.querySelector(".control-form__second-file-input");
+const compare = document.querySelector(".compare-button");
+const color = document.querySelector(".control-form__color-input");
+const radio = document.querySelectorAll(".control-form__radio-block>input");
+const range = document.querySelector("control-form__negative-opacity-slider");
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
-const firstPageInput = document.querySelector("#page_doc_1");
-const secondPageInput = document.querySelector("#page_doc_2");
-const lower1Arow = document.querySelector(".lower1");
-const lower2Arow = document.querySelector(".lower2");
-const higher1Arow = document.querySelector(".higher1");
-const higher2Arow = document.querySelector(".higher2");
+const firstPageInput = document.querySelector(".page-control__first-page-input");
+const secondPageInput = document.querySelector(".page-control__second-page-input");
+const lower1Arow = document.querySelector(".page-control__lower-first-arrow");
+const lower2Arow = document.querySelector(".page-control__higher-first-arrow");
+const higher1Arow = document.querySelector(".page-control__lower-second-arrow");
+const higher2Arow = document.querySelector(".page-control__higher-second-arrow");
 
 let allLoaded = 0;
 
@@ -30,7 +29,6 @@ const addLoader = (target) => {
 const pdfHendler = async (canvas, pageNum, file) => {
     const pdf = await pdfjsLib.getDocument(file).promise;
     console.log(pageNum);
-    // const pdfPage = await pdf.getPage(pageNum);
     const pdfPage = await pdf.getPage(parseInt(pageNum, 10));
     const context = canvas.getContext('2d');
     const viewport = pdfPage.getViewport({ scale: 2 });
@@ -104,6 +102,7 @@ const readFile = (file, target, canvas, pageNum) => {
     console.log(pageNum);
     reader.onloadend = async (event) => {
         const image = new Image()
+        image.classList.add("preview-box__img")
         if (file.type.startsWith('application/pdf')) {
             console.log(pageNum);
             // const somthing = await pdfHendler(canvas, pageNumber, event.target.result);
@@ -229,7 +228,7 @@ const comparation = () => {
         if (radioValue() == 2) {
             resolt.innerHTML = "";
             resolt.appendChild(canvas1);
-            canvas2.classList.add("negative")
+            canvas2.classList.add("result-box__negative")
             console.log(opacity.value);
             canvas2.style.opacity = `${opacity.value / 100}`;
             resolt.appendChild(canvas2);

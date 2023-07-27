@@ -9,16 +9,16 @@ const secondFileInput = document.querySelector(".control-form__second-file-input
 const compare = document.querySelector(".compare-button");
 const color = document.querySelector(".control-form__color-input");
 const radio = document.querySelectorAll(".control-form__radio-block>input");
-const range = document.querySelector("control-form__negative-opacity-slider");
+const range = document.querySelector(".control-form__accuracy-slider");
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
 const firstPageInput = document.querySelector(".page-control__first-page-input");
 const secondPageInput = document.querySelector(".page-control__second-page-input");
-const lower1Arow = document.querySelector(".page-control__lower-first-arrow");
-const lower2Arow = document.querySelector(".page-control__higher-first-arrow");
-const higher1Arow = document.querySelector(".page-control__lower-second-arrow");
-const higher2Arow = document.querySelector(".page-control__higher-second-arrow");
+const lower1Arow = document.querySelector(".page-control__lower-first-arrow-box");
+const higher1Arow = document.querySelector(".page-control__higher-first-arrow-box");
+const lower2Arow = document.querySelector(".page-control__lower-second-arrow-box");
+const higher2Arow = document.querySelector(".page-control__higher-second-arrow-box");
 
 let allLoaded = 0;
 
@@ -28,7 +28,6 @@ const addLoader = (target) => {
 
 const pdfHendler = async (canvas, pageNum, file) => {
     const pdf = await pdfjsLib.getDocument(file).promise;
-    console.log(pageNum);
     const pdfPage = await pdf.getPage(parseInt(pageNum, 10));
     const context = canvas.getContext('2d');
     const viewport = pdfPage.getViewport({ scale: 2 });
@@ -56,8 +55,8 @@ const radioValue = () => {
     radio.forEach(i => {
         if (i.checked) {
             value = i.value;
-        }
-    })
+        };
+    });
     return value;
 }
 
@@ -137,17 +136,56 @@ const readFile = (file, target, canvas, pageNum) => {
 
 firstFileInput.addEventListener('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
 secondFileInput.addEventListener('change', (event) => { readFile(event.target.files[0], secondDiv, canvas2, secondPageNumber) });
+
+const reRender = (file) => {
+    readFile(file, secondDiv, canvas2, secondPageNumber)
+};
+
 firstPageInput.addEventListener('change', () => {
     firstPageNumber = firstPageInput.value;
-});
-secondPageInput.addEventListener('change', () => {
-    secondPageNumber = secondPageInput.value;
+    if (firstFileInput.files[0]) {
+        readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
+    };
 });
 
-lower1Arow.addEventListener("click", () => { firstPageInput.stepDown() });
-lower2Arow.addEventListener("click", () => { secondPageInput.stepDown() });
-higher1Arow.addEventListener("click", () => { firstPageInput.stepUp() });
-higher2Arow.addEventListener("click", () => { secondPageInput.stepUp() });
+secondPageInput.addEventListener('change', () => {
+    secondPageNumber = secondPageInput.value;
+    if (secondFileInput.files[0]) {
+        readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
+    };
+});
+
+lower1Arow.addEventListener("click", () => {
+    firstPageInput.stepDown()
+    firstPageNumber = firstPageInput.value;
+    if (firstFileInput.files[0]) {
+        readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
+    };
+});
+
+lower2Arow.addEventListener("click", () => {
+    secondPageInput.stepDown()
+    secondPageNumber = secondPageInput.value;
+    if (secondFileInput.files[0]) {
+        readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
+    };
+});
+
+higher1Arow.addEventListener("click", () => {
+    firstPageInput.stepUp()
+    firstPageNumber = firstPageInput.value;
+    if (firstFileInput.files[0]) {
+        readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
+    };
+});
+
+higher2Arow.addEventListener("click", () => {
+    secondPageInput.stepUp()
+    secondPageNumber = secondPageInput.value;
+    if (secondFileInput.files[0]) {
+        readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
+    };
+});
 
 
 const dragHendler = (event) => {
@@ -219,6 +257,11 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 };
 
 const comparation = () => {
+    resolt.innerHTML = "";
+
+    canvas2.classList.remove("result-box__negative");
+    canvas2.style.opacity = 1;
+
     console.log(allLoaded);
     if (allLoaded === 2) {
 
@@ -228,12 +271,12 @@ const comparation = () => {
         if (radioValue() == 2) {
             resolt.innerHTML = "";
             resolt.appendChild(canvas1);
-            canvas2.classList.add("result-box__negative")
+            canvas2.classList.add("result-box__negative");
             console.log(opacity.value);
             canvas2.style.opacity = `${opacity.value / 100}`;
             resolt.appendChild(canvas2);
-            opacity.addEventListener('change', () => { canvas2.style.opacity = `${opacity.value / 100}` })
-            return
+            opacity.addEventListener('change', () => { canvas2.style.opacity = `${opacity.value / 100}` });
+            return;
         }
 
         if (radioValue() == 1) {

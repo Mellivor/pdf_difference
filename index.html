@@ -20,29 +20,31 @@
                     accept="image/png, image/jpeg, application/pdf">
             </div>
             <div class="control-form__radio-block">
-                <input type="radio" name="chack-type" value="0" checked id="radio1"
-                    class="control-form__radio-first-mode">
-                <label for="radio1">Result on first image</label>
-                <input type="radio" name="chack-type" value="1" id="radio2" class="control-form__radio-second-mode">
-                <label for="radio2">Result on white sheet</label>
-                <input type="radio" name="chack-type" value="2" id="radio3" class="control-form__radio-third-mode">
-                <label for="radio3">Result on negative</label>
+                <div class="control-form__radio-block-item">
+                    <input type="radio" name="chack-type" value="0" checked id="radio1"
+                        class="control-form__radio-first-mode">
+                    <label for="radio1" class="control-form__radio-label">Result on first image</label>
+                </div>
+                <div class="control-form__radio-block-item">
+                    <input type="radio" name="chack-type" value="1" id="radio2" class="control-form__radio-second-mode">
+                    <label for="radio2" class="control-form__radio-label">Result on white sheet</label>
+                </div>
+                <div class="control-form__radio-block-item">
+                    <input type="radio" name="chack-type" value="2" id="radio3" class="control-form__radio-third-mode">
+                    <label for="radio3" class="control-form__radio-label">Result on negative</label>
+                </div>
             </div>
-            <div class="control-form__standart-mode-controls
-            control-form__standart-mode-controls_hidden
-            control-form__standart-mode-controls_width-0">
+            <div class="control-form__standart-mode-controls">
+                <label for="range">Accuracy </label>
                 <input type="range" name="range" id="range" value="180" min="0" max="255"
                     class="control-form__accuracy-slider">
-                <label for="range">Accuracy </label>
                 <input type="color" name="color" id="color" value="#FF69B4" class="control-form__color-input">
-                <label for="color">Add differerenced pixels color</label>
+                <label for="color">pixels color</label>
             </div>
-            <div class="control-form__negative-mode-controls
-            control-form__negative-mode-controls_hidden
-            control-form__negative-mode-controls_width-0">
+            <div class="control-form__negative-mode-controls">
+                <label for="opacity" class="control-form__negative-label">Color or not</label>
                 <input type="range" name="opacity" id="opacity" value="50" min="0" max="100"
                     class="control-form__negative-opacity-slider">
-                <label for="opacity">Color or not</label>
             </div>
         </form>
         <div class="preview-box">
@@ -70,7 +72,6 @@
             <div class="page-control__higher-first-arrow-box">
                 <i class="page-control__higher-first-arrow fa-solid fa-angle-right "></i>
             </div>
-            <button class="compare-button">Compare</button>
             <div class="page-control__lower-second-arrow-box">
                 <i class="page-control__lower-second-arrow fa-solid fa-angle-left "></i>
             </div>
@@ -80,6 +81,8 @@
                 <i class="page-control__higher-second-arrow fa-solid fa-angle-right "></i>
             </div>
         </div>
+        <button class="compare-button">Compare</button>
+
         <div class="result-box">
 
         </div>

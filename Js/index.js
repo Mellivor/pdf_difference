@@ -1,5 +1,8 @@
 let firstPageNumber = 1;
 let secondPageNumber = 1;
+const cardDefault = document.querySelector(".preview-box__content")
+const standartControls = document.querySelector(".control-form__standart-mode-controls")
+const negativeControls = document.querySelector(".control-form__negative-mode-controls")
 const opacity = document.querySelector(".control-form__negative-opacity-slider")
 const firstDiv = document.querySelector(".preview-box__first-card");
 const secondDiv = document.querySelector(".preview-box__second-card");
@@ -8,7 +11,7 @@ const firstFileInput = document.querySelector(".control-form__first-file-input")
 const secondFileInput = document.querySelector(".control-form__second-file-input");
 const compare = document.querySelector(".compare-button");
 const color = document.querySelector(".control-form__color-input");
-const radio = document.querySelectorAll(".control-form__radio-block>input");
+const radio = document.querySelectorAll(".control-form__radio-block-item>input");
 const range = document.querySelector(".control-form__accuracy-slider");
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
@@ -19,6 +22,27 @@ const lower1Arow = document.querySelector(".page-control__lower-first-arrow-box"
 const higher1Arow = document.querySelector(".page-control__higher-first-arrow-box");
 const lower2Arow = document.querySelector(".page-control__lower-second-arrow-box");
 const higher2Arow = document.querySelector(".page-control__higher-second-arrow-box");
+
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        compare.click();
+    }
+});
+
+radio[2].addEventListener("change", () => {
+    standartControls.classList.add("control-form__standart-mode-controls_width-0");
+    negativeControls.classList.remove("control-form__negative-mode-controls_width-0");
+
+});
+radio[1].addEventListener("change", () => {
+    standartControls.classList.remove("control-form__standart-mode-controls_width-0");
+    negativeControls.classList.add("control-form__negative-mode-controls_width-0");
+});
+
+radio[0].addEventListener("change", () => {
+    standartControls.classList.remove("control-form__standart-mode-controls_width-0");
+    negativeControls.classList.add("control-form__negative-mode-controls_width-0");
+});
 
 let allLoaded = 0;
 
@@ -77,7 +101,8 @@ const readFile = (file, target, canvas, pageNum) => {
 
     if (!file) {
         allLoaded -= 1;
-        target.innerHTML = '<i class="fa-sharp fa-solid fa-file-pdf"></i>';
+        target.innerHTML = '';
+        target.appendChild(cardDefault.cloneNode(true));
         return;
     };
 

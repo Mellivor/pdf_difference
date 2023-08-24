@@ -1,47 +1,75 @@
 let firstPageNumber = 1;
 let secondPageNumber = 1;
-const cardDefault = document.querySelector(".preview-box__content")
-const standartControls = document.querySelector(".control-form__standart-mode-controls")
-const negativeControls = document.querySelector(".control-form__negative-mode-controls")
-const opacity = document.querySelector(".control-form__negative-opacity-slider")
-const firstDiv = document.querySelector(".preview-box__first-card");
-const secondDiv = document.querySelector(".preview-box__second-card");
-const resolt = document.querySelector(".result-box");
-const firstFileInput = document.querySelector(".control-form__first-file-input");
-const secondFileInput = document.querySelector(".control-form__second-file-input");
-const compare = document.querySelector(".compare-button");
-const color = document.querySelector(".control-form__color-input");
-const radio = document.querySelectorAll(".control-form__radio-block-item>input");
-const range = document.querySelector(".control-form__accuracy-slider");
+const cardDefault = $(".preview-box__content");
+const standartControls = $(".control-form__standart-mode-controls");
+const negativeControls = $(".control-form__negative-mode-controls");
+const opacity = $(".control-form__negative-opacity-slider");
+const firstDiv = $(".preview-box__first-card");
+const secondDiv = $(".preview-box__second-card");
+const resolt = $(".result-box");
+const firstFileInput = $(".control-form__first-file-input");
+const secondFileInput = $(".control-form__second-file-input");
+const compare = $(".compare-button");
+const color = $(".control-form__color-input");
+const radio = $(".control-form__radio-block-item>input");
+radio.on("change", (e) => { console.log(e.target.value); })
+// console.log($(radio[0]).is(":checked"))
+console.log(radio.filter(":checked").val())
+const radioFirst = $(".control-form__radio-first-mode");
+const radioSecond = $(".control-form__radio-second-mode");
+const radioThird = $(".control-form__radio-third-mode");
+const range = $(".control-form__accuracy-slider");
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
-const firstPageInput = document.querySelector(".page-control__first-page-input");
-const secondPageInput = document.querySelector(".page-control__second-page-input");
-const lower1Arow = document.querySelector(".page-control__lower-first-arrow-box");
-const higher1Arow = document.querySelector(".page-control__higher-first-arrow-box");
-const lower2Arow = document.querySelector(".page-control__lower-second-arrow-box");
-const higher2Arow = document.querySelector(".page-control__higher-second-arrow-box");
+const firstPageInput = $(".page-control__first-page-input");
+const secondPageInput = $(".page-control__second-page-input");
+const lower1Arow = $(".page-control__lower-first-arrow-box");
+const higher1Arow = $(".page-control__higher-first-arrow-box");
+const lower2Arow = $(".page-control__lower-second-arrow-box");
+const higher2Arow = $(".page-control__higher-second-arrow-box");
+// const cardDefault = document.querySelector(".preview-box__content")
+// const standartControls = document.querySelector(".control-form__standart-mode-controls")
+// const negativeControls = document.querySelector(".control-form__negative-mode-controls")
+// const opacity = document.querySelector(".control-form__negative-opacity-slider")
+// const firstDiv = document.querySelector(".preview-box__first-card");
+// const secondDiv = document.querySelector(".preview-box__second-card");
+// const resolt = document.querySelector(".result-box");
+// const firstFileInput = document.querySelector(".control-form__first-file-input");
+// const secondFileInput = document.querySelector(".control-form__second-file-input");
+// const compare = document.querySelector(".compare-button");
+// const color = document.querySelector(".control-form__color-input");
+// const radio = document.querySelectorAll(".control-form__radio-block-item>input");
+// const range = document.querySelector(".control-form__accuracy-slider");
+// const canvas1 = document.createElement('canvas');
+// const canvas2 = document.createElement('canvas');
+// const canvasRes = document.createElement('canvas');
+// const firstPageInput = document.querySelector(".page-control__first-page-input");
+// const secondPageInput = document.querySelector(".page-control__second-page-input");
+// const lower1Arow = document.querySelector(".page-control__lower-first-arrow-box");
+// const higher1Arow = document.querySelector(".page-control__higher-first-arrow-box");
+// const lower2Arow = document.querySelector(".page-control__lower-second-arrow-box");
+// const higher2Arow = document.querySelector(".page-control__higher-second-arrow-box");
 
-document.addEventListener('keypress', function (e) {
+$(document).on('keypress', function (e) {
     if (e.key === 'Enter') {
         compare.click();
     }
 });
 
-radio[2].addEventListener("change", () => {
-    standartControls.classList.add("control-form__standart-mode-controls_width-0");
-    negativeControls.classList.remove("control-form__negative-mode-controls_width-0");
+radioThird.on("change", () => {
+    standartControls.addClass("control-form__standart-mode-controls_shifted");
+    negativeControls.toggleClass("control-form__negative-mode-controls_shifted");
 
 });
-radio[1].addEventListener("change", () => {
-    standartControls.classList.remove("control-form__standart-mode-controls_width-0");
-    negativeControls.classList.add("control-form__negative-mode-controls_width-0");
+radioSecond.on("change", () => {
+    standartControls.removeClass("control-form__standart-mode-controls_shifted");
+    negativeControls.addClass("control-form__negative-mode-controls_shifted");
 });
 
-radio[0].addEventListener("change", () => {
-    standartControls.classList.remove("control-form__standart-mode-controls_width-0");
-    negativeControls.classList.add("control-form__negative-mode-controls_width-0");
+radioFirst.on("change", () => {
+    standartControls.removeClass("control-form__standart-mode-controls_shifted");
+    negativeControls.addClass("control-form__negative-mode-controls_shifted");
 });
 
 let allLoaded = 0;
@@ -75,13 +103,13 @@ const isFileValid = (file) => {
 }
 
 const radioValue = () => {
-    let value;
-    radio.forEach(i => {
-        if (i.checked) {
-            value = i.value;
-        };
-    });
-    return value;
+    // let value;
+    // radio.forEach(i => {
+    //     if (i.checked) {
+    //         value = i.value;
+    //     };
+    // });
+    return radio.filter(":checked").val();
 }
 
 const drawPixel = (context, x, y, color) => {
@@ -101,8 +129,8 @@ const readFile = (file, target, canvas, pageNum) => {
 
     if (!file) {
         allLoaded -= 1;
-        target.innerHTML = '';
-        target.appendChild(cardDefault.cloneNode(true));
+        target.html('');
+        target.append(cardDefault.cloneNode(true));
         return;
     };
 
@@ -145,8 +173,8 @@ const readFile = (file, target, canvas, pageNum) => {
             image.src = event.target.result;
         };
 
-        target.innerHTML = '';
-        target.appendChild(image);
+        target.html('');
+        target.append(image);
         // image.src = canvas.toDataURL();
         // resolt.appendChild(image);
         // target.appendChild(canvas);
@@ -159,56 +187,56 @@ const readFile = (file, target, canvas, pageNum) => {
     };
 };
 
-firstFileInput.addEventListener('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
-secondFileInput.addEventListener('change', (event) => { readFile(event.target.files[0], secondDiv, canvas2, secondPageNumber) });
+firstFileInput.on('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
+secondFileInput.on('change', (event) => { readFile(event.target.files[0], secondDiv, canvas2, secondPageNumber) });
 
 const reRender = (file) => {
     readFile(file, secondDiv, canvas2, secondPageNumber)
 };
 
-firstPageInput.addEventListener('change', () => {
+firstPageInput.on('change', () => {
     firstPageNumber = firstPageInput.value;
     if (firstFileInput.files[0]) {
         readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
     };
 });
 
-secondPageInput.addEventListener('change', () => {
+secondPageInput.on('change', () => {
     secondPageNumber = secondPageInput.value;
     if (secondFileInput.files[0]) {
         readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
     };
 });
 
-lower1Arow.addEventListener("click", () => {
-    firstPageInput.stepDown()
-    firstPageNumber = firstPageInput.value;
-    if (firstFileInput.files[0]) {
-        readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
+lower1Arow.on("click", () => {
+    firstPageInput[0].stepDown()
+    firstPageNumber = firstPageInput.val();
+    if (firstFileInput[0].files[0]) {
+        readFile(firstFileInput[0].files[0], firstDiv, canvas1, firstPageNumber);
     };
 });
 
-lower2Arow.addEventListener("click", () => {
-    secondPageInput.stepDown()
-    secondPageNumber = secondPageInput.value;
-    if (secondFileInput.files[0]) {
-        readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
+lower2Arow.on("click", () => {
+    secondPageInput[0].stepDown()
+    secondPageNumber = secondPageInput.val();
+    if (secondFileInput[0].files[0]) {
+        readFile(secondFileInput[0].files[0], secondDiv, canvas2, secondPageNumber);
     };
 });
 
-higher1Arow.addEventListener("click", () => {
-    firstPageInput.stepUp()
-    firstPageNumber = firstPageInput.value;
-    if (firstFileInput.files[0]) {
-        readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
+higher1Arow.on("click", () => {
+    firstPageInput[0].stepUp()
+    firstPageNumber = firstPageInput.val();
+    if (firstFileInput[0].files[0]) {
+        readFile(firstFileInput[0].files[0], firstDiv, canvas1, firstPageNumber);
     };
 });
 
-higher2Arow.addEventListener("click", () => {
-    secondPageInput.stepUp()
-    secondPageNumber = secondPageInput.value;
-    if (secondFileInput.files[0]) {
-        readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
+higher2Arow.on("click", () => {
+    secondPageInput[0].stepUp()
+    secondPageNumber = secondPageInput.val();
+    if (secondFileInput[0].files[0]) {
+        readFile(secondFileInput[0].files[0], secondDiv, canvas2, secondPageNumber);
     };
 });
 
@@ -227,11 +255,11 @@ const dropHendler = (event, targetDiv, canvas, pageNum) => {
     readFile(fileList[0], targetDiv, canvas, pageNum);
 };
 
-firstDiv.addEventListener('dragover', dragHendler);
-firstDiv.addEventListener('click', () => { firstFileInput.click() });
-firstDiv.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
-firstDiv.addEventListener('drop', (event) => { dropHendler(event, firstDiv, canvas1, firstPageNumber) });
-// firstDiv.addEventListener('drop', (event) => {
+firstDiv.on('dragover', dragHendler);
+firstDiv.on('click', () => { firstFileInput.click() });
+firstDiv.on('dragleave', (event) => { event.target.classList.remove('drag-target') });
+firstDiv.on('drop', (event) => { dropHendler(event, firstDiv, canvas1, firstPageNumber) });
+// firstDiv.on('drop', (event) => {
 //     const fileList = event.dataTransfer.files[0];
 //     debugger;
 //     firstFileInput.files[0] = fileList
@@ -239,13 +267,13 @@ firstDiv.addEventListener('drop', (event) => { dropHendler(event, firstDiv, canv
 //     console.log(firstFileInput.files);
 //     console.log(firstFileInput.files[0]);
 // });
-secondDiv.addEventListener('dragover', dragHendler);
-secondDiv.addEventListener('click', () => { secondFileInput.click() });
-secondDiv.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
-secondDiv.addEventListener('drop', (event) => { dropHendler(event, secondDiv, canvas2, secondPageNumber) });
+secondDiv.on('dragover', dragHendler);
+secondDiv.on('click', () => { secondFileInput.click() });
+secondDiv.on('dragleave', (event) => { event.target.classList.remove('drag-target') });
+secondDiv.on('drop', (event) => { dropHendler(event, secondDiv, canvas2, secondPageNumber) });
 
 // targets.forEach((e) => {
-//     e.addEventListener('dragover', (event) => {
+//     e.on('dragover', (event) => {
 //         event.stopPropagation();
 //         event.preventDefault();
 //         event.dataTransfer.dropEffect = 'copy';
@@ -253,9 +281,9 @@ secondDiv.addEventListener('drop', (event) => { dropHendler(event, secondDiv, ca
 //         event.target.classList.add('drag-target')
 //     });
 
-//     e.addEventListener('dragleave', (event) => { event.target.classList.remove('drag-target') });
+//     e.on('dragleave', (event) => { event.target.classList.remove('drag-target') });
 
-//     e.addEventListener('drop', (event) => {
+//     e.on('drop', (event) => {
 //         event.stopPropagation();
 //         event.preventDefault();
 //         const fileList = event.dataTransfer.files;
@@ -300,7 +328,7 @@ const comparation = () => {
             console.log(opacity.value);
             canvas2.style.opacity = `${opacity.value / 100}`;
             resolt.appendChild(canvas2);
-            opacity.addEventListener('change', () => { canvas2.style.opacity = `${opacity.value / 100}` });
+            opacity.on('change', () => { canvas2.style.opacity = `${opacity.value / 100}` });
             return;
         }
 
@@ -335,11 +363,11 @@ const comparation = () => {
 
 
         }
-        resolt.innerHTML = "";
-        resolt.appendChild(canvas2);
+        resolt.html("");
+        resolt.append(canvas2);
 
     };
 
 };
 
-compare.addEventListener("click", comparation)
+compare.on("click", comparation)

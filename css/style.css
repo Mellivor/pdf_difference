@@ -80,8 +80,8 @@ body {
     margin: 0 1vw;
 }
 
-.control-form__negative-mode-controls_width-0,
-.control-form__standart-mode-controls_width-0 {
+.control-form__negative-mode-controls_shifted,
+.control-form__standart-mode-controls_shifted {
     left: 1%;
 }
 

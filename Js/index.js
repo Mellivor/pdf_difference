@@ -21,6 +21,7 @@ const radioThird = $(".control-form__radio-third-mode");
 const range = $(".control-form__accuracy-slider");
 const canvas1 = document.createElement('canvas');
 const canvas2 = document.createElement('canvas');
+const canvas3 = document.createElement('canvas');
 const canvasRes = document.createElement('canvas');
 const firstPageInput = $(".page-control__first-page-input");
 const secondPageInput = $(".page-control__second-page-input");
@@ -103,12 +104,6 @@ const isFileValid = (file) => {
 }
 
 const radioValue = () => {
-    // let value;
-    // radio.forEach(i => {
-    //     if (i.checked) {
-    //         value = i.value;
-    //     };
-    // });
     return radio.filter(":checked").val();
 }
 
@@ -130,7 +125,8 @@ const readFile = (file, target, canvas, pageNum) => {
     if (!file) {
         allLoaded -= 1;
         target.html('');
-        target.append(cardDefault.cloneNode(true));
+        target.append(cardDefault[0].cloneNode(true));
+        compare.removeClass("compare-button_active")
         return;
     };
 
@@ -141,14 +137,6 @@ const readFile = (file, target, canvas, pageNum) => {
         allLoaded -= 1;
         return;
     }
-
-
-    // if (file.type.startsWith('application/pdf')) {
-
-    //     pdfHendler(canvas2.getContext('2d'), 1, file);
-    //     allLoaded -= 1;
-    //     return;
-    // }
 
     const reader = new FileReader();
     console.log(pageNum);
@@ -184,7 +172,10 @@ const readFile = (file, target, canvas, pageNum) => {
 
     if (allLoaded < 2) {
         allLoaded += 1;
-    };
+        compare.removeClass("compare-button_active")
+        console.log(allLoaded);
+    }
+    if (allLoaded == 2) { compare.addClass("compare-button_active") };
 };
 
 firstFileInput.on('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
@@ -242,56 +233,31 @@ higher2Arow.on("click", () => {
 
 
 const dragHendler = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    event.target.classList.add('drag-target')
+    console.log(event.currentTarget);
+    event.originalEvent.stopPropagation();
+    event.originalEvent.preventDefault();
+    event.originalEvent.dataTransfer.dropEffect = 'copy';
+    if (!event.currentTarget.classList.contains('drag-target')) {
+        event.currentTarget.addClass('drag-target')
+    }
 };
 
 const dropHendler = (event, targetDiv, canvas, pageNum) => {
-    event.stopPropagation();
-    event.preventDefault();
-    const fileList = event.dataTransfer.files;
+    event.originalEvent.stopPropagation();
+    event.originalEvent.preventDefault();
+    const fileList = event.originalEvent.dataTransfer.files;
     readFile(fileList[0], targetDiv, canvas, pageNum);
 };
 
 firstDiv.on('dragover', dragHendler);
 firstDiv.on('click', () => { firstFileInput.click() });
-firstDiv.on('dragleave', (event) => { event.target.classList.remove('drag-target') });
+firstDiv.on('dragleave', (event) => { event.currentTarget.classList.remove('drag-target') });
 firstDiv.on('drop', (event) => { dropHendler(event, firstDiv, canvas1, firstPageNumber) });
-// firstDiv.on('drop', (event) => {
-//     const fileList = event.dataTransfer.files[0];
-//     debugger;
-//     firstFileInput.files[0] = fileList
-//     console.log(fileList);
-//     console.log(firstFileInput.files);
-//     console.log(firstFileInput.files[0]);
-// });
+
 secondDiv.on('dragover', dragHendler);
 secondDiv.on('click', () => { secondFileInput.click() });
-secondDiv.on('dragleave', (event) => { event.target.classList.remove('drag-target') });
+secondDiv.on('dragleave', (event) => { event.currentTarget.classList.remove('drag-target') });
 secondDiv.on('drop', (event) => { dropHendler(event, secondDiv, canvas2, secondPageNumber) });
-
-// targets.forEach((e) => {
-//     e.on('dragover', (event) => {
-//         event.stopPropagation();
-//         event.preventDefault();
-//         event.dataTransfer.dropEffect = 'copy';
-//         console.log(event.target);
-//         event.target.classList.add('drag-target')
-//     });
-
-//     e.on('dragleave', (event) => { event.target.classList.remove('drag-target') });
-
-//     e.on('drop', (event) => {
-//         event.stopPropagation();
-//         event.preventDefault();
-//         const fileList = event.dataTransfer.files;
-//         console.log(e);
-//         readFile(fileList[0], e, canvas1);
-//     });
-// })
-
 
 const definedXY = ({ index, width }) => {
     let x = Math.floor((index / 4) % width + 1);
@@ -309,26 +275,24 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 
 };
 
-const comparation = () => {
-    resolt.innerHTML = "";
+const comparison = () => {
+    resolt.html('');
 
     canvas2.classList.remove("result-box__negative");
     canvas2.style.opacity = 1;
 
-    console.log(allLoaded);
     if (allLoaded === 2) {
 
         const { imageData: imageData1 } = getCanvasData(canvas1);
         const { imageData: imageData2, context: context2 } = getCanvasData(canvas2);
 
         if (radioValue() == 2) {
-            resolt.innerHTML = "";
-            resolt.appendChild(canvas1);
-            canvas2.classList.add("result-box__negative");
-            console.log(opacity.value);
-            canvas2.style.opacity = `${opacity.value / 100}`;
-            resolt.appendChild(canvas2);
-            opacity.on('change', () => { canvas2.style.opacity = `${opacity.value / 100}` });
+            resolt.html('');
+            resolt.append(canvas1);
+            canvas2.addClass("result-box__negative");
+            canvas2.style.opacity = `${opacity[0].value / 100}`;
+            resolt.append(canvas2);
+            opacity.on('change', () => { canvas2.style.opacity = `${opacity[0].value / 100}` });
             return;
         }
 
@@ -350,24 +314,23 @@ const comparation = () => {
                     b2: imageData2.data[index + 2],
                     a1: imageData2.data[index + 3],
                     a2: imageData2.data[index + 3],
-                    accuracy: 255 - range.value,
+                    accuracy: 255 - range[0].value,
                 }
             )
+
             ) {
 
                 let x = definedXY({ index, width: canvas1.width }).x;
                 let y = definedXY({ index, width: canvas1.width }).y;
-                drawPixel(context2, x, y, color.value);
+                drawPixel(context2, x, y, color[0].value);
 
             };
-
 
         }
         resolt.html("");
         resolt.append(canvas2);
-
     };
 
 };
 
-compare.on("click", comparation)
+compare.on("click", comparison)

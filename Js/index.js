@@ -277,7 +277,6 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 
 const comparison = () => {
     resolt.html('');
-
     canvas2.classList.remove("result-box__negative");
     canvas2.style.opacity = 1;
 
@@ -289,7 +288,7 @@ const comparison = () => {
         if (radioValue() == 2) {
             resolt.html('');
             resolt.append(canvas1);
-            canvas2.addClass("result-box__negative");
+            $(canvas2).addClass("result-box__negative");
             canvas2.style.opacity = `${opacity[0].value / 100}`;
             resolt.append(canvas2);
             opacity.on('change', () => { canvas2.style.opacity = `${opacity[0].value / 100}` });

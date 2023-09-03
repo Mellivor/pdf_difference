@@ -1,5 +1,9 @@
 let firstPageNumber = 1;
 let secondPageNumber = 1;
+let mainWidth = null;
+let mainHeight = null;
+
+
 const cardDefault = $(".preview-box__content");
 const standartControls = $(".control-form__standart-mode-controls");
 const negativeControls = $(".control-form__negative-mode-controls");
@@ -12,45 +16,22 @@ const secondFileInput = $(".control-form__second-file-input");
 const compare = $(".compare-button");
 const color = $(".control-form__color-input");
 const radio = $(".control-form__radio-block-item>input");
-radio.on("change", (e) => { console.log(e.target.value); })
-// console.log($(radio[0]).is(":checked"))
-console.log(radio.filter(":checked").val())
+// radio.on("change", (e) => { console.log(e.target.value); })
+// console.log(radio.filter(":checked").val())
 const radioFirst = $(".control-form__radio-first-mode");
 const radioSecond = $(".control-form__radio-second-mode");
 const radioThird = $(".control-form__radio-third-mode");
 const range = $(".control-form__accuracy-slider");
-const canvas1 = document.createElement('canvas');
-const canvas2 = document.createElement('canvas');
-const canvas3 = document.createElement('canvas');
-const canvasRes = document.createElement('canvas');
 const firstPageInput = $(".page-control__first-page-input");
 const secondPageInput = $(".page-control__second-page-input");
 const lower1Arow = $(".page-control__lower-first-arrow-box");
 const higher1Arow = $(".page-control__higher-first-arrow-box");
 const lower2Arow = $(".page-control__lower-second-arrow-box");
 const higher2Arow = $(".page-control__higher-second-arrow-box");
-// const cardDefault = document.querySelector(".preview-box__content")
-// const standartControls = document.querySelector(".control-form__standart-mode-controls")
-// const negativeControls = document.querySelector(".control-form__negative-mode-controls")
-// const opacity = document.querySelector(".control-form__negative-opacity-slider")
-// const firstDiv = document.querySelector(".preview-box__first-card");
-// const secondDiv = document.querySelector(".preview-box__second-card");
-// const resolt = document.querySelector(".result-box");
-// const firstFileInput = document.querySelector(".control-form__first-file-input");
-// const secondFileInput = document.querySelector(".control-form__second-file-input");
-// const compare = document.querySelector(".compare-button");
-// const color = document.querySelector(".control-form__color-input");
-// const radio = document.querySelectorAll(".control-form__radio-block-item>input");
-// const range = document.querySelector(".control-form__accuracy-slider");
-// const canvas1 = document.createElement('canvas');
-// const canvas2 = document.createElement('canvas');
-// const canvasRes = document.createElement('canvas');
-// const firstPageInput = document.querySelector(".page-control__first-page-input");
-// const secondPageInput = document.querySelector(".page-control__second-page-input");
-// const lower1Arow = document.querySelector(".page-control__lower-first-arrow-box");
-// const higher1Arow = document.querySelector(".page-control__higher-first-arrow-box");
-// const lower2Arow = document.querySelector(".page-control__lower-second-arrow-box");
-// const higher2Arow = document.querySelector(".page-control__higher-second-arrow-box");
+
+const canvas1 = document.createElement('canvas');
+const canvas2 = document.createElement('canvas');
+const resultCanvas = document.createElement('canvas');
 
 $(document).on('keypress', function (e) {
     if (e.key === 'Enter') {
@@ -76,19 +57,33 @@ radioFirst.on("change", () => {
 let allLoaded = 0;
 
 const addLoader = (target) => {
-    target.innerHTML = '';
+    target.html('<div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
+};
+
+const settMainHeightWidth = ({ width, height, canvas }) => {
+    if (!mainWidth) {
+        mainWidth = width;
+        mainHeight = height;
+    };
+    canvas.width = mainWidth;
+    canvas.height = mainHeight;
 };
 
 const pdfHendler = async (canvas, pageNum, file) => {
     const pdf = await pdfjsLib.getDocument(file).promise;
     const pdfPage = await pdf.getPage(parseInt(pageNum, 10));
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d', { willReadFrequently: true }, { antialias: false, depth: false });
     const viewport = pdfPage.getViewport({ scale: 2 });
+    settMainHeightWidth({ width: viewport.width, height: viewport.height, canvas: canvas })
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
-    canvas.style.width = Math.floor(viewport.width) + "px";
-    canvas.style.height = Math.floor(viewport.height) + "px";
+    // canvas.width = mainWidth;
+    // canvas.height = mainHeight;
+    // canvas.style.width = mainWidth; + "px";
+    // canvas.style.height = mainHeight + "px";
 
+    // viewport.width = mainWidth
+    // viewport.height = mainHeight
     const renderContext = {
         canvasContext: context,
         transform: false,
@@ -98,8 +93,7 @@ const pdfHendler = async (canvas, pageNum, file) => {
 };
 
 const isFileValid = (file) => {
-    const acceptedTypes = ['image/gif', 'image/jpeg', 'image/png', 'application/pdf'];
-
+    const acceptedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
     return file && acceptedTypes.includes(file['type'])
 }
 
@@ -113,7 +107,7 @@ const drawPixel = (context, x, y, color) => {
 }
 
 const getCanvasData = (canvas) => {
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d', { willReadFrequently: true });
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     return { imageData, context };
 };
@@ -130,8 +124,6 @@ const readFile = (file, target, canvas, pageNum) => {
         return;
     };
 
-
-    // if (file.type && !file.type.startsWith('image/', 'pdf/')) {
     if (!isFileValid(file)) {
         console.log('File is not an image.', file.type, file);
         allLoaded -= 1;
@@ -139,33 +131,30 @@ const readFile = (file, target, canvas, pageNum) => {
     }
 
     const reader = new FileReader();
-    console.log(pageNum);
+
     reader.onloadend = async (event) => {
         const image = new Image()
         image.classList.add("preview-box__img")
+
         if (file.type.startsWith('application/pdf')) {
-            console.log(pageNum);
-            // const somthing = await pdfHendler(canvas, pageNumber, event.target.result);
             await pdfHendler(canvas, pageNum, event.target.result);
-            // setTimeout(() => {
-            //     image.src = canvas.toDataURL();
-            //     console.log(canvas.toDataURL())
-
-            // }, 600);
             image.src = canvas.toDataURL();
-
-            // console.log(dataUrl)
-            // target.appendChild(canvas);
-            // target.appendChild(canvas1);
+            canvas.width = mainWidth;
+            canvas.height = mainHeight;
+            image.onload = () => {
+                canvas.getContext('2d').drawImage(image, 0, 0, mainWidth, mainHeight);
+            };
+            resolt.append(canvas);
         } else {
             image.src = event.target.result;
+            image.onload = () => {
+                settMainHeightWidth({ width: image.naturalWidth, height: image.naturalHeight, canvas: canvas })
+                getCanvasData(canvas).context.drawImage(image, 0, 0, mainWidth, mainHeight);
+            };
         };
 
         target.html('');
         target.append(image);
-        // image.src = canvas.toDataURL();
-        // resolt.appendChild(image);
-        // target.appendChild(canvas);
     };
 
     reader.readAsDataURL(file);
@@ -173,8 +162,8 @@ const readFile = (file, target, canvas, pageNum) => {
     if (allLoaded < 2) {
         allLoaded += 1;
         compare.removeClass("compare-button_active")
-        console.log(allLoaded);
     }
+
     if (allLoaded == 2) { compare.addClass("compare-button_active") };
 };
 
@@ -233,12 +222,11 @@ higher2Arow.on("click", () => {
 
 
 const dragHendler = (event) => {
-    console.log(event.currentTarget);
     event.originalEvent.stopPropagation();
     event.originalEvent.preventDefault();
     event.originalEvent.dataTransfer.dropEffect = 'copy';
     if (!event.currentTarget.classList.contains('drag-target')) {
-        event.currentTarget.addClass('drag-target')
+        $(event.currentTarget).addClass('drag-target')
     }
 };
 
@@ -277,10 +265,9 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 
 const comparison = () => {
     resolt.html('');
-    canvas2.classList.remove("result-box__negative");
-    canvas2.style.opacity = 1;
 
     if (allLoaded === 2) {
+
 
         const { imageData: imageData1 } = getCanvasData(canvas1);
         const { imageData: imageData2, context: context2 } = getCanvasData(canvas2);
@@ -295,13 +282,19 @@ const comparison = () => {
             return;
         }
 
+        resultCanvas.width = mainWidth;
+        resultCanvas.height = mainHeight;
+        const { context: resultContext } = getCanvasData(resultCanvas);
+
         if (radioValue() == 1) {
-            context2.fillStyle = "#ffff";
-            context2.fillRect(0, 0, canvas1.width, canvas1.height);
+            resultContext.fillStyle = "#ffff";
+            resultContext.fillRect(0, 0, mainWidth, mainHeight);
+        } else {
+            resultContext.drawImage(canvas1, 0, 0, mainWidth, mainHeight);
         };
 
 
-        for (let index = 0; index < (canvas1.width * canvas1.height * 4); index += 4) {
+        for (let index = 0; index < (mainWidth * mainHeight * 4); index += 4) {
 
             if (isPixelSimular(
                 {
@@ -319,15 +312,14 @@ const comparison = () => {
 
             ) {
 
-                let x = definedXY({ index, width: canvas1.width }).x;
-                let y = definedXY({ index, width: canvas1.width }).y;
-                drawPixel(context2, x, y, color[0].value);
+                let x = definedXY({ index, width: mainWidth }).x;
+                let y = definedXY({ index, width: mainWidth }).y;
+                drawPixel(resultContext, x, y, color[0].value);
 
             };
 
         }
-        resolt.html("");
-        resolt.append(canvas2);
+        resolt.append(resultCanvas);
     };
 
 };

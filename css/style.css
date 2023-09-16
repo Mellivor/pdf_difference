@@ -145,7 +145,6 @@ body {
 
 .result-box {
     position: relative;
-
 }
 
 .page-control__first-page-input::-webkit-outer-spin-button,
@@ -211,7 +210,7 @@ body {
     /* display: flex;
     justify-content: center;
     align-items: center; */
-    min-height: 32vh;
+    min-height: 31.65vh;
 
 }
 

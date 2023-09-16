@@ -16,8 +16,6 @@ const secondFileInput = $(".control-form__second-file-input");
 const compare = $(".compare-button");
 const color = $(".control-form__color-input");
 const radio = $(".control-form__radio-block-item>input");
-// radio.on("change", (e) => { console.log(e.target.value); })
-// console.log(radio.filter(":checked").val())
 const radioFirst = $(".control-form__radio-first-mode");
 const radioSecond = $(".control-form__radio-second-mode");
 const radioThird = $(".control-form__radio-third-mode");
@@ -142,14 +140,20 @@ const readFile = (file, target, canvas, pageNum) => {
             canvas.height = mainHeight;
             image.onload = () => {
                 canvas.getContext('2d').drawImage(image, 0, 0, mainWidth, mainHeight);
-                if (secondFileInput[0].files[0] && firstFileInput[0].files[0] && !!secondDiv.has("img").length && !!firstDiv.has("img").length) { compare.addClass("compare-button_active") };
+                if (secondFileInput[0].files[0] &&
+                    firstFileInput[0].files[0] &&
+                    !!secondDiv.has("img").length &&
+                    !!firstDiv.has("img").length) { compare.addClass("compare-button_active") };
             };
         } else {
             image.src = event.target.result;
             image.onload = () => {
                 settMainHeightWidth({ width: image.naturalWidth, height: image.naturalHeight, canvas: canvas })
                 getCanvasData(canvas).context.drawImage(image, 0, 0, mainWidth, mainHeight);
-                if (secondFileInput[0].files[0] && firstFileInput[0].files[0] && !!secondDiv.has("img").length && !!firstDiv.has("img").length) { compare.addClass("compare-button_active") };
+                if (secondFileInput[0].files[0] &&
+                    firstFileInput[0].files[0] &&
+                    !!secondDiv.has("img").length &&
+                    !!firstDiv.has("img").length) { compare.addClass("compare-button_active") };
             };
         };
 
@@ -264,24 +268,23 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 
 };
 
-const comparison = () => {
+const comparison = (yCoor) => {
     resolt.html('');
 
-    if (secondFileInput[0].files[0] && firstFileInput[0].files[0] && !!secondDiv.has("img").length && !!firstDiv.has("img").length) {
-        // console.log(window.scrollY < 400);
-        // console.log(window.scrollY);
-        // console.log(window.pageYOffset);
-        // if (window.scrollY < 400) {
+    if (secondFileInput[0].files[0] &&
+        firstFileInput[0].files[0] &&
+        !!secondDiv.has("img").length &&
+        !!firstDiv.has("img").length) {
 
-        //     $([document.documentElement, document.body]).animate({
-        //         scrollTop: $(resolt).offset().top
-        //     }, 2000);
-        //     resolt.get(0).scrollIntoView({ behavior: 'smooth' });
-        //     addLoader(resolt);
+        if (yCoor < 200) {
 
-        // };
+            // addLoader(resolt);
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $(compare).offset().top
+            }, 2000);
+            compare.get(0).scrollIntoView({ behavior: 'smooth' });
 
-        // console.log(window.scrollY);
+        };
 
         const { imageData: imageData1 } = getCanvasData(canvas1);
         const { imageData: imageData2 } = getCanvasData(canvas2);
@@ -339,4 +342,6 @@ const comparison = () => {
 
 };
 
-compare.on("click", comparison)
+compare.on("click", () => {
+    comparison(Math.round(window.scrollY))
+})

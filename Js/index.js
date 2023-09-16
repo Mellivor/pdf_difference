@@ -114,6 +114,7 @@ const getCanvasData = (canvas) => {
 
 const readFile = (file, target, canvas, pageNum) => {
 
+    compare.removeClass("compare-button_active")
     addLoader(target);
 
     if (!file) {
@@ -141,12 +142,14 @@ const readFile = (file, target, canvas, pageNum) => {
             canvas.height = mainHeight;
             image.onload = () => {
                 canvas.getContext('2d').drawImage(image, 0, 0, mainWidth, mainHeight);
+                if (secondFileInput[0].files[0] && firstFileInput[0].files[0] && !!secondDiv.has("img").length && !!firstDiv.has("img").length) { compare.addClass("compare-button_active") };
             };
         } else {
             image.src = event.target.result;
             image.onload = () => {
                 settMainHeightWidth({ width: image.naturalWidth, height: image.naturalHeight, canvas: canvas })
                 getCanvasData(canvas).context.drawImage(image, 0, 0, mainWidth, mainHeight);
+                if (secondFileInput[0].files[0] && firstFileInput[0].files[0] && !!secondDiv.has("img").length && !!firstDiv.has("img").length) { compare.addClass("compare-button_active") };
             };
         };
 
@@ -156,11 +159,6 @@ const readFile = (file, target, canvas, pageNum) => {
 
     reader.readAsDataURL(file);
 
-    if (!(secondFileInput[0].files[0] && firstFileInput[0].files[0])) {
-        compare.removeClass("compare-button_active")
-    }
-
-    if (secondFileInput[0].files[0] && firstFileInput[0].files[0]) { compare.addClass("compare-button_active") };
 };
 
 firstFileInput.on('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
@@ -267,11 +265,9 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 };
 
 const comparison = () => {
-
     resolt.html('');
 
-    if (secondFileInput[0].files[0] && firstFileInput[0].files[0]) {
-
+    if (secondFileInput[0].files[0] && firstFileInput[0].files[0] && !!secondDiv.has("img").length && !!firstDiv.has("img").length) {
         // console.log(window.scrollY < 400);
         // console.log(window.scrollY);
         // console.log(window.pageYOffset);
@@ -338,8 +334,6 @@ const comparison = () => {
 
         }
         resolt.html(resultCanvas);
-        // }, 10);
-        // addLoader(resolt);
 
     };
 

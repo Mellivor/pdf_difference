@@ -207,6 +207,15 @@ body {
     box-shadow: #00000066 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, #00000033 0px -3px 0px inset;
 } */
 
+.result-box {
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    min-height: 32vh;
+
+}
+
+
 .control-form__radio-block-item:has(input:checked),
 .compare-button_active {
     box-shadow: #0235fe30 0px 10px 20px, #6df5813b 0px 6px 6px;

@@ -54,8 +54,6 @@ radioFirst.on("change", () => {
     negativeControls.addClass("control-form__negative-mode-controls_shifted");
 });
 
-let allLoaded = 0;
-
 const addLoader = (target) => {
     target.html('<div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
 };
@@ -71,6 +69,8 @@ const settMainHeightWidth = ({ width, height, canvas }) => {
 
 const pdfHendler = async (canvas, pageNum, file) => {
     const pdf = await pdfjsLib.getDocument(file).promise;
+    if (pdf._pdfInfo.numPages < pageNum) { pageNum = pdf._pdfInfo.numPages };
+    if (pageNum < 1) { pageNum = pdf._pdfInfo.numPages };
     const pdfPage = await pdf.getPage(parseInt(pageNum, 10));
     const context = canvas.getContext('2d', { willReadFrequently: true }, { antialias: false, depth: false });
     const viewport = pdfPage.getViewport({ scale: 2 });
@@ -117,7 +117,6 @@ const readFile = (file, target, canvas, pageNum) => {
     addLoader(target);
 
     if (!file) {
-        allLoaded -= 1;
         target.html('');
         target.append(cardDefault[0].cloneNode(true));
         compare.removeClass("compare-button_active")
@@ -126,9 +125,8 @@ const readFile = (file, target, canvas, pageNum) => {
 
     if (!isFileValid(file)) {
         console.log('File is not an image.', file.type, file);
-        allLoaded -= 1;
         return;
-    }
+    };
 
     const reader = new FileReader();
 
@@ -144,7 +142,6 @@ const readFile = (file, target, canvas, pageNum) => {
             image.onload = () => {
                 canvas.getContext('2d').drawImage(image, 0, 0, mainWidth, mainHeight);
             };
-            resolt.append(canvas);
         } else {
             image.src = event.target.result;
             image.onload = () => {
@@ -159,12 +156,11 @@ const readFile = (file, target, canvas, pageNum) => {
 
     reader.readAsDataURL(file);
 
-    if (allLoaded < 2) {
-        allLoaded += 1;
+    if (!(secondFileInput[0].files[0] && firstFileInput[0].files[0])) {
         compare.removeClass("compare-button_active")
     }
 
-    if (allLoaded == 2) { compare.addClass("compare-button_active") };
+    if (secondFileInput[0].files[0] && firstFileInput[0].files[0]) { compare.addClass("compare-button_active") };
 };
 
 firstFileInput.on('change', (event) => { readFile(event.target.files[0], firstDiv, canvas1, firstPageNumber) });
@@ -175,16 +171,16 @@ const reRender = (file) => {
 };
 
 firstPageInput.on('change', () => {
-    firstPageNumber = firstPageInput.value;
-    if (firstFileInput.files[0]) {
-        readFile(firstFileInput.files[0], firstDiv, canvas1, firstPageNumber);
+    firstPageNumber = firstPageInput.val();
+    if (firstFileInput[0].files[0]) {
+        readFile(firstFileInput[0].files[0], firstDiv, canvas1, firstPageNumber);
     };
 });
 
 secondPageInput.on('change', () => {
-    secondPageNumber = secondPageInput.value;
-    if (secondFileInput.files[0]) {
-        readFile(secondFileInput.files[0], secondDiv, canvas2, secondPageNumber);
+    secondPageNumber = secondPageInput.val();
+    if (secondFileInput[0].files[0]) {
+        readFile(secondFileInput[0].files[0], secondDiv, canvas2, secondPageNumber);
     };
 });
 
@@ -230,22 +226,29 @@ const dragHendler = (event) => {
     }
 };
 
-const dropHendler = (event, targetDiv, canvas, pageNum) => {
+const dropHendler = (event, targetDiv, canvas, pageNum, inputFile) => {
     event.originalEvent.stopPropagation();
     event.originalEvent.preventDefault();
+
     const fileList = event.originalEvent.dataTransfer.files;
-    readFile(fileList[0], targetDiv, canvas, pageNum);
+
+    const dT = new DataTransfer();
+    dT.items.add(fileList[0]);
+    inputFile.files = dT.files;
+
+    console.log(inputFile.files[0]);
+    readFile(inputFile.files[0], targetDiv, canvas, pageNum);
 };
 
 firstDiv.on('dragover', dragHendler);
 firstDiv.on('click', () => { firstFileInput.click() });
 firstDiv.on('dragleave', (event) => { event.currentTarget.classList.remove('drag-target') });
-firstDiv.on('drop', (event) => { dropHendler(event, firstDiv, canvas1, firstPageNumber) });
+firstDiv.on('drop', (event) => { dropHendler(event, firstDiv, canvas1, firstPageNumber, firstFileInput[0]) });
 
 secondDiv.on('dragover', dragHendler);
 secondDiv.on('click', () => { secondFileInput.click() });
 secondDiv.on('dragleave', (event) => { event.currentTarget.classList.remove('drag-target') });
-secondDiv.on('drop', (event) => { dropHendler(event, secondDiv, canvas2, secondPageNumber) });
+secondDiv.on('drop', (event) => { dropHendler(event, secondDiv, canvas2, secondPageNumber, secondFileInput[0]) });
 
 const definedXY = ({ index, width }) => {
     let x = Math.floor((index / 4) % width + 1);
@@ -264,13 +267,28 @@ const isPixelSimular = ({ r1, r2, g1, g2, b1, b2, a1, a2, accuracy }) => {
 };
 
 const comparison = () => {
+
     resolt.html('');
 
-    if (allLoaded === 2) {
+    if (secondFileInput[0].files[0] && firstFileInput[0].files[0]) {
 
+        // console.log(window.scrollY < 400);
+        // console.log(window.scrollY);
+        // console.log(window.pageYOffset);
+        // if (window.scrollY < 400) {
+
+        //     $([document.documentElement, document.body]).animate({
+        //         scrollTop: $(resolt).offset().top
+        //     }, 2000);
+        //     resolt.get(0).scrollIntoView({ behavior: 'smooth' });
+        //     addLoader(resolt);
+
+        // };
+
+        // console.log(window.scrollY);
 
         const { imageData: imageData1 } = getCanvasData(canvas1);
-        const { imageData: imageData2, context: context2 } = getCanvasData(canvas2);
+        const { imageData: imageData2 } = getCanvasData(canvas2);
 
         if (radioValue() == 2) {
             resolt.html('');
@@ -319,7 +337,10 @@ const comparison = () => {
             };
 
         }
-        resolt.append(resultCanvas);
+        resolt.html(resultCanvas);
+        // }, 10);
+        // addLoader(resolt);
+
     };
 
 };
